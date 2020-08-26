@@ -32,6 +32,7 @@ import sys
 import time
 import numpy as np
 import imgaug  # https://github.com/aleju/imgaug (pip3 install imgaug)
+import pdb
 
 # Download and install the Python COCO tools from https://github.com/waleedka/coco
 # That's a fork from the original https://github.com/pdollar/coco with a bug
@@ -56,12 +57,12 @@ from mrcnn.config import Config
 from mrcnn import model as modellib, utils
 
 # Path to trained weights file
-COCO_MODEL_PATH = os.path.join(ROOT_DIR, "mask_rcnn_coco.h5")
-
-# Directory to save logs and model checkpoints, if not provided
-# through the command line argument --logs
-DEFAULT_LOGS_DIR = os.path.join(ROOT_DIR, "logs")
-DEFAULT_DATASET_YEAR = "2014"
+# COCO_MODEL_PATH = os.path.join(ROOT_DIR, "mask_rcnn_coco.h5")
+#
+# # Directory to save logs and model checkpoints, if not provided
+# # through the command line argument --logs
+# DEFAULT_LOGS_DIR = os.path.join(ROOT_DIR, "logs")
+# DEFAULT_DATASET_YEAR = "2014"
 
 ############################################################
 #  Configurations
@@ -92,7 +93,7 @@ class CocoConfig(Config):
 ############################################################
 
 class CocoDataset(utils.Dataset):
-    def load_coco(self, dataset_dir, subset, year=DEFAULT_DATASET_YEAR, class_ids=None,
+    def load_coco(self, dataset_dir, subset, year='2017', class_ids=None,
                   class_map=None, return_coco=False, auto_download=False):
         """Load a subset of the COCO dataset.
         dataset_dir: The root directory of the COCO dataset.
@@ -402,22 +403,22 @@ if __name__ == '__main__':
     # Parse command line arguments
     parser = argparse.ArgumentParser(
         description='Train Mask R-CNN on MS COCO.')
-    parser.add_argument("command",
-                        metavar="<command>",
+    parser.add_argument("--command", required=False,
+                        default="train",
                         help="'train' or 'evaluate' on MS COCO")
-    parser.add_argument('--dataset', required=True,
-                        metavar="/path/to/coco/",
+    parser.add_argument('--dataset', required=False,
+                        default="/data/datasets/coco/",
                         help='Directory of the MS-COCO dataset')
     parser.add_argument('--year', required=False,
-                        default=DEFAULT_DATASET_YEAR,
-                        metavar="<year>",
+                        # default=DEFAULT_DATASET_YEAR,
+                        default="2017",
                         help='Year of the MS-COCO dataset (2014 or 2017) (default=2014)')
-    parser.add_argument('--model', required=True,
-                        metavar="/path/to/weights.h5",
+    parser.add_argument('--model', required=False,
+                        default="/data/models/segment/mask_rcnn/logs/coco20200511T1220/mask_rcnn_coco_0020.h5",
                         help="Path to weights .h5 file or 'coco'")
     parser.add_argument('--logs', required=False,
-                        default=DEFAULT_LOGS_DIR,
-                        metavar="/path/to/logs/",
+                        # default=DEFAULT_LOGS_DIR,
+                        default="/data/models/segment/mask_rcnn/logs/",
                         help='Logs and checkpoints directory (default=logs/)')
     parser.add_argument('--limit', required=False,
                         default=500,
@@ -457,21 +458,22 @@ if __name__ == '__main__':
         model = modellib.MaskRCNN(mode="inference", config=config,
                                   model_dir=args.logs)
 
-    # Select weights file to load
-    if args.model.lower() == "coco":
-        model_path = COCO_MODEL_PATH
-    elif args.model.lower() == "last":
-        # Find last trained weights
-        model_path = model.find_last()
-    elif args.model.lower() == "imagenet":
-        # Start from ImageNet trained weights
-        model_path = model.get_imagenet_weights()
-    else:
-        model_path = args.model
-
-    # Load weights
-    print("Loading weights ", model_path)
-    model.load_weights(model_path, by_name=True)
+    # # pdb.set_trace()
+    # # Select weights file to load
+    # if args.model.lower() == "coco":
+    #     model_path = COCO_MODEL_PATH
+    # elif args.model.lower() == "last":
+    #     # Find last trained weights
+    #     model_path = model.find_last()
+    # elif args.model.lower() == "imagenet":
+    #     # Start from ImageNet trained weights
+    #     model_path = model.get_imagenet_weights()
+    # else:
+    #     model_path = args.model
+    #
+    # # Load weights
+    # print("Loading weights ", model_path)
+    # model.load_weights(model_path, by_name=True)
 
     # Train or evaluate
     if args.command == "train":

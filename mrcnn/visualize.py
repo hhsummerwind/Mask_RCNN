@@ -12,6 +12,7 @@ import sys
 import random
 import itertools
 import colorsys
+import pdb
 
 import numpy as np
 from skimage.measure import find_contours
@@ -98,6 +99,7 @@ def display_instances(image, boxes, masks, class_ids, class_names,
     captions: (optional) A list of strings to use as captions for each object
     """
     # Number of instances
+    # pdb.set_trace()
     N = boxes.shape[0]
     if not N:
         print("\n*** No instances to display *** \n")
@@ -162,9 +164,10 @@ def display_instances(image, boxes, masks, class_ids, class_names,
             verts = np.fliplr(verts) - 1
             p = Polygon(verts, facecolor="none", edgecolor=color)
             ax.add_patch(p)
-    ax.imshow(masked_image.astype(np.uint8))
-    if auto_show:
-        plt.show()
+    # ax.imshow(masked_image.astype(np.uint8))
+    # if auto_show:
+    #     plt.show()
+    return masked_image.astype(np.uint8)
 
 
 def display_differences(image,
